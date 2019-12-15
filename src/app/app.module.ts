@@ -14,6 +14,11 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { SigninComponent } from './auth/signin/signin.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import {MatCardModule} from '@angular/material/card';
+import {StopTrainingComponent} from './training/current-training/stop-training.component';
+import {AuthService} from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +29,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     NewTrainingComponent,
     PastTrainingsComponent,
     WelcomeComponent,
-    SigninComponent
+    SigninComponent,
+    HeaderComponent,
+    SidenavListComponent,
+    StopTrainingComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,9 +41,11 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     BrowserAnimationsModule,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCardModule
   ],
-  providers: [],
+  entryComponents: [StopTrainingComponent],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
