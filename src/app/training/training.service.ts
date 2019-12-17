@@ -1,47 +1,60 @@
 import {Injectable} from '@angular/core';
 import {Exercise} from './excercise.model';
 import {Subject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {PastExercise} from './past-exercise.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrainingService {
 
+  exercisesChanged = new Subject<Exercise[]>();
   exerciseChanged = new Subject<boolean>();
-  private availableExercises: Exercise[] = [
-    {id: 'crunches', name: 'Crunches', duration: 30, calories: 8},
-    {id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15},
-    {id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18},
-    {id: 'burpees', name: 'Burpees', duration: 60, calories: 8}
-  ];
+  private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
-  private pastExercises: Exercise[] = [];
+  private pastExercises: PastExercise[] = [];
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
-  getExercises(): Exercise[] {
-    return this.availableExercises.slice();
+  fetchAvailableExercises() {
+    this.http.get('/api/exercise/all').subscribe((exercises: Exercise[]) => {
+      this.availableExercises = exercises;
+      this.exercisesChanged.next([...exercises]);
+    });
   }
 
-  getPastExercises(): Exercise[] {
-    return this.pastExercises.slice();
+  savePastOrCancelledExercise(pastExercise: PastExercise) {
+    this.http.post('/api/exercise/save', pastExercise).subscribe();
+  }
+
+  fetchPastExercises() {
+    this.http.get('api/exercise/past').subscribe((pastExercises: PastExercise[]) => this.pastExercises = pastExercises);
   }
 
   cancelExercise(progress: number) {
-    this.pastExercises.push({
-      ...this.runningExercise,
-      date: new Date(),
-      state: 'cancelled',
-      duration: this.runningExercise.duration * (progress / 100),
-      calories: this.runningExercise.calories * (progress / 100),
-    });
+    this.savePastOrCancelledExercise(new PastExercise(
+      this.runningExercise.id,
+      this.runningExercise.name,
+      this.runningExercise.duration * (progress / 100),
+      this.runningExercise.calories * (progress / 100),
+      new Date(),
+      'cancelled'
+    ));
     this.runningExercise = null;
     this.exerciseChanged.next(false);
   }
 
   completeExercise() {
-    this.pastExercises.push({...this.runningExercise, date: new Date(), state: 'completed'});
+    this.savePastOrCancelledExercise(new PastExercise(
+      this.runningExercise.id,
+      this.runningExercise.name,
+      this.runningExercise.duration,
+      this.runningExercise.calories,
+      new Date(),
+      'completed'
+    ));
     this.runningExercise = null;
     this.exerciseChanged.next(false);
   }
@@ -54,4 +67,5 @@ export class TrainingService {
     this.runningExercise = this.availableExercises.find(ex => ex.id === id);
     this.exerciseChanged.next(true);
   }
+
 }

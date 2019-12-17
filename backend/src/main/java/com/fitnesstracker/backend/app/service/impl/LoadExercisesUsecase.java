@@ -1,6 +1,7 @@
 package com.fitnesstracker.backend.app.service.impl;
 
 import com.fitnesstracker.backend.app.domain.Exercise;
+import com.fitnesstracker.backend.app.domain.PastExercise;
 import com.fitnesstracker.backend.app.service.LoadExercises;
 import com.fitnesstracker.backend.app.service.repo.ExerciseGateway;
 import java.util.Set;
@@ -18,5 +19,10 @@ public class LoadExercisesUsecase implements LoadExercises {
   @Override
   public Set<Exercise> loadAll() {
     return gateway.loadAll();
+  }
+
+  @Override
+  public Set<PastExercise> loadPast() {
+    return null;
   }
 }
