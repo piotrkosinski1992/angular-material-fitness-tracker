@@ -1,17 +1,20 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {TrainingService} from '../training.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {PastExercise} from '../past-exercise.model';
-import {Subscription} from 'rxjs';
+import {Store} from '@ngrx/store';
+import * as fromTrainingReducer from '../state/training.reducer';
+import * as trainingSelectors from '../state/training.selectors';
+import * as trainingActions from '../state/training.actions';
 
 @Component({
   selector: 'app-past-trainings',
   templateUrl: './past-trainings.component.html',
   styleUrls: ['./past-trainings.component.scss']
 })
-export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PastTrainingsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
@@ -22,15 +25,13 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
   dataSource = new MatTableDataSource<PastExercise>();
   displayedColumns = ['date', 'exerciseName', 'timeSpent', 'caloriesBurned', 'state'];
 
-  pastExercisesSubscription: Subscription;
-
-  constructor(private trainingService: TrainingService) {
+  constructor(private trainingService: TrainingService, private store: Store<fromTrainingReducer.State>) {
   }
 
   ngOnInit() {
-    this.pastExercisesSubscription = this.trainingService.pastExercisesChanged
+    this.store.dispatch(new trainingActions.TryGetFinishedTrainings());
+    this.store.select(trainingSelectors.getFinishedExercises)
     .subscribe((pastExercises: PastExercise[]) => this.dataSource.data = pastExercises);
-    this.trainingService.fetchPastExercises();
   }
 
   ngAfterViewInit(): void {
@@ -42,7 +43,4 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.dataSource.filter = filterValue.trim().toLocaleLowerCase();
   }
 
-  ngOnDestroy(): void {
-    this.pastExercisesSubscription.unsubscribe();
-  }
 }

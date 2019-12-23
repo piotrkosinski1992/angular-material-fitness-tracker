@@ -2,7 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {StopTrainingComponent} from './stop-training.component';
 import {Exercise} from '../excercise.model';
-import {TrainingService} from '../training.service';
+import * as fromTrainingReducer from '../state/training.reducer';
+import * as trainingSelectors from '../state/training.selectors';
+import * as trainingActions from '../state/training.actions';
+import {Store} from '@ngrx/store';
+import {PastExercise} from '../past-exercise.model';
 
 @Component({
   selector: 'app-current-training',
@@ -14,11 +18,11 @@ export class CurrentTrainingComponent implements OnInit {
   timer: number;
   exercise: Exercise;
 
-  constructor(private dialog: MatDialog, private trainingService: TrainingService) {
+  constructor(private dialog: MatDialog, private store: Store<fromTrainingReducer.State>) {
   }
 
   ngOnInit() {
-    this.exercise = this.trainingService.getRunningExercise();
+    this.store.select(trainingSelectors.getActiveExercise).subscribe(result => this.exercise = result);
     this.startOrResumeTimer();
   }
 
@@ -27,7 +31,13 @@ export class CurrentTrainingComponent implements OnInit {
     this.timer = setInterval(() => {
       this.progress = this.progress + 1;
       if (this.progress >= 100) {
-        this.trainingService.completeExercise();
+        this.store.dispatch(new trainingActions.StopTraining(new PastExercise(
+          this.exercise.name,
+          this.exercise.duration,
+          this.exercise.calories,
+          new Date(),
+          'completed'
+        )));
         clearInterval(this.timer);
       }
     }, step);
@@ -39,7 +49,14 @@ export class CurrentTrainingComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((stopTraining: boolean) => {
       if (stopTraining) {
-        this.trainingService.cancelExercise(this.progress);
+        this.store.dispatch(new trainingActions.StopTraining(
+          new PastExercise(
+            this.exercise.name,
+            this.exercise.duration * (this.progress / 100),
+            this.exercise.calories * (this.progress / 100),
+            new Date(),
+            'cancelled'
+          )));
       } else {
         this.startOrResumeTimer();
       }

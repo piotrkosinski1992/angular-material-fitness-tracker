@@ -5,35 +5,28 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from './material.module';
-import {SignupComponent} from './auth/signup/signup.component';
-import {TrainingComponent} from './training/training.component';
-import {CurrentTrainingComponent} from './training/current-training/current-training.component';
-import {NewTrainingComponent} from './training/new-training/new-training.component';
-import {PastTrainingsComponent} from './training/past-trainings/past-trainings.component';
 import {WelcomeComponent} from './welcome/welcome.component';
-import {SigninComponent} from './auth/signin/signin.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HeaderComponent} from './navigation/header/header.component';
 import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
-import {StopTrainingComponent} from './training/current-training/stop-training.component';
 import {AuthService} from './auth/auth.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {AuthModule} from './auth/auth.module';
 import {AuthInterceptor} from './auth/auth.interceptor';
+import {environment} from '../environments/environment.prod';
+import {StoreModule} from '@ngrx/store';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {reducers} from './app.reducer';
+import {AuthEffects} from './auth/store/auth.effects';
+import {EffectsModule} from '@ngrx/effects';
+import {TrainingEffects} from './training/state/training.effects';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SignupComponent,
-    TrainingComponent,
-    CurrentTrainingComponent,
-    NewTrainingComponent,
-    PastTrainingsComponent,
     WelcomeComponent,
-    SigninComponent,
     HeaderComponent,
-    SidenavListComponent,
-    StopTrainingComponent,
+    SidenavListComponent
   ],
   imports: [
     BrowserModule,
@@ -41,11 +34,12 @@ import {AuthInterceptor} from './auth/auth.interceptor';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AuthModule,
+    StoreModule.forRoot(reducers),
+    StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
+    EffectsModule.forRoot([AuthEffects])
   ],
-  entryComponents: [StopTrainingComponent],
   providers: [AuthService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]

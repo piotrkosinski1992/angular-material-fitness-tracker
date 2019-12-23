@@ -1,21 +1,25 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../auth.service';
-import {UiService} from '../../shared/ui.service';
-import {Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
+import {Store} from '@ngrx/store';
+import * as fromRootReducer from '../../app.reducer';
+import * as uiSelectors from '../../shared/ui.selectors';
+import * as authSelectors from '../store/auth.selectors';
+import {User} from '../user.model';
+import * as authActions from '../../auth/store/auth.actions';
 
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss']
 })
-export class SigninComponent implements OnInit, OnDestroy {
+export class SigninComponent implements OnInit {
 
-  uiSubscription: Subscription;
   loginForm: FormGroup;
-  isLoading = false;
+  isLoading$: Observable<boolean>;
+  isLoggedIn$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private uiService: UiService) {
+  constructor(private store: Store<fromRootReducer.State>) {
   }
 
   ngOnInit() {
@@ -23,17 +27,11 @@ export class SigninComponent implements OnInit, OnDestroy {
       email: new FormControl('test@gmail.com', [Validators.required, Validators.email]),
       password: new FormControl('test', Validators.required)
     });
-    this.uiSubscription = this.uiService.loadingSateChanged.subscribe(result => this.isLoading = result);
+    this.isLoading$ = this.store.select(uiSelectors.getIsLoading);
+    this.isLoggedIn$ = this.store.select(authSelectors.getIsLoggedIn);
   }
 
   onSubmit() {
-    this.authService.login({
-      email: this.loginForm.value.email,
-      password: this.loginForm.value.password
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.uiSubscription.unsubscribe();
+    this.store.dispatch(new authActions.TryLogIn(new User(this.loginForm.value.email, this.loginForm.value.password)));
   }
 }

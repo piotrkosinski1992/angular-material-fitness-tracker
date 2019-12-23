@@ -1,11 +1,13 @@
 package com.fitnesstracker.backend.app.commons.auth.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 class JwtAuthenticationRequest implements Serializable {
 
   private static final long serialVersionUID = -8445943548965154778L;
 
+  @JsonProperty("email")
   private String username;
   private String password;
 

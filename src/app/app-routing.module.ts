@@ -1,17 +1,13 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {WelcomeComponent} from './welcome/welcome.component';
-import {SignupComponent} from './auth/signup/signup.component';
-import {TrainingComponent} from './training/training.component';
-import {SigninComponent} from './auth/signin/signin.component';
 import {AuthGuard} from './auth/auth.guard';
+import {TrainingModule} from './training/training.module';
 
 
 const routes: Routes = [
   {path: '', component: WelcomeComponent},
-  {path: 'signup', component: SignupComponent},
-  {path: 'signin', component: SigninComponent},
-  {path: 'training', component: TrainingComponent, canActivate: [AuthGuard]},
+  {path: 'training', loadChildren: () => TrainingModule, canLoad: [AuthGuard]}
 ];
 
 @NgModule({
@@ -19,4 +15,5 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [AuthGuard]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}
