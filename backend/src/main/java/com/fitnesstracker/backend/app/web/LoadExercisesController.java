@@ -24,9 +24,4 @@ public class LoadExercisesController {
   public Set<Exercise> loadAll() {
     return loadExercises.loadAll();
   }
-
-  @GetMapping("/past/all")
-  public List<PastExercise> loadPastFromCurrentUser(Principal principal) {
-    return null;
-  }
 }

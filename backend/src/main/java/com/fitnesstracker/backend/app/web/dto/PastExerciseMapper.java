@@ -3,7 +3,6 @@ package com.fitnesstracker.backend.app.web.dto;
 import com.fitnesstracker.backend.app.domain.PastExercise;
 import com.fitnesstracker.backend.app.domain.State;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -15,7 +14,6 @@ public class PastExerciseMapper {
 
   public PastExerciseMapper() {
     mapper.addConverter(convertToState());
-    mapper.addConverter(convertToUUID());
     mapper.addConverter(convertToLocalDateTime());
     mapper.getConfiguration()
       .setFieldMatchingEnabled(true)
@@ -33,20 +31,15 @@ public class PastExerciseMapper {
     return mapper.map(dto, PastExercise.class);
   }
 
+  public PastExerciseDto toDto(PastExercise pastExercise) {
+    return mapper.map(pastExercise, PastExerciseDto.class);
+  }
+
   private AbstractConverter<String, State> convertToState() {
     return new AbstractConverter<String, State>() {
       @Override
       protected State convert(String stringState) {
         return State.valueOf(stringState);
-      }
-    };
-  }
-
-  private AbstractConverter<String, UUID> convertToUUID() {
-    return new AbstractConverter<String, UUID>() {
-      @Override
-      protected UUID convert(String stringUUID) {
-        return UUID.fromString(stringUUID);
       }
     };
   }
@@ -60,5 +53,4 @@ public class PastExerciseMapper {
       }
     };
   }
-
 }

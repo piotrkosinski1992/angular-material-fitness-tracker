@@ -1,16 +1,17 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {TrainingService} from '../training.service';
-import {Exercise} from '../excercise.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
+import {PastExercise} from '../past-exercise.model';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-past-trainings',
   templateUrl: './past-trainings.component.html',
   styleUrls: ['./past-trainings.component.scss']
 })
-export class PastTrainingsComponent implements OnInit, AfterViewInit {
+export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
@@ -18,14 +19,18 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
 
-  dataSource = new MatTableDataSource<Exercise>();
-  displayedColumns = ['date', 'name', 'duration', 'calories', 'state'];
+  dataSource = new MatTableDataSource<PastExercise>();
+  displayedColumns = ['date', 'exerciseName', 'timeSpent', 'caloriesBurned', 'state'];
+
+  pastExercisesSubscription: Subscription;
 
   constructor(private trainingService: TrainingService) {
   }
 
   ngOnInit() {
-    //this.dataSource.data = this.trainingService.fetchPastExercises();
+    this.pastExercisesSubscription = this.trainingService.pastExercisesChanged
+    .subscribe((pastExercises: PastExercise[]) => this.dataSource.data = pastExercises);
+    this.trainingService.fetchPastExercises();
   }
 
   ngAfterViewInit(): void {
@@ -35,5 +40,9 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
 
   doFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLocaleLowerCase();
+  }
+
+  ngOnDestroy(): void {
+    this.pastExercisesSubscription.unsubscribe();
   }
 }

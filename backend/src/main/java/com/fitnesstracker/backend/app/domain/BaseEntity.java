@@ -29,15 +29,15 @@ public class BaseEntity {
     return id;
   }
 
-  public Role getRole() {
+  public Role role() {
     return role;
   }
 
-  public String getUsername() {
+  public String username() {
     return username;
   }
 
-  public String getPassword() {
+  public String password() {
     return password;
   }
 

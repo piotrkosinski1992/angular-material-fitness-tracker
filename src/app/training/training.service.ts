@@ -11,9 +11,9 @@ export class TrainingService {
 
   exercisesChanged = new Subject<Exercise[]>();
   exerciseChanged = new Subject<boolean>();
+  pastExercisesChanged = new Subject<PastExercise[]>();
   private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
-  private pastExercises: PastExercise[] = [];
 
   constructor(private http: HttpClient) {
   }
@@ -26,16 +26,16 @@ export class TrainingService {
   }
 
   savePastOrCancelledExercise(pastExercise: PastExercise) {
-    this.http.post('/api/exercise/save', pastExercise).subscribe();
+    this.http.post('/api/exercise/past/save', pastExercise).subscribe();
   }
 
   fetchPastExercises() {
-    this.http.get('api/exercise/past').subscribe((pastExercises: PastExercise[]) => this.pastExercises = pastExercises);
+    this.http.get('api/exercise/past/all').subscribe((
+      pastExercises: PastExercise[]) => this.pastExercisesChanged.next(pastExercises));
   }
 
   cancelExercise(progress: number) {
     this.savePastOrCancelledExercise(new PastExercise(
-      this.runningExercise.id,
       this.runningExercise.name,
       this.runningExercise.duration * (progress / 100),
       this.runningExercise.calories * (progress / 100),
@@ -48,7 +48,6 @@ export class TrainingService {
 
   completeExercise() {
     this.savePastOrCancelledExercise(new PastExercise(
-      this.runningExercise.id,
       this.runningExercise.name,
       this.runningExercise.duration,
       this.runningExercise.calories,

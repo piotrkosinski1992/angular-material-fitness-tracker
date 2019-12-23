@@ -9,19 +9,19 @@
     <mat-cell *matCellDef="let element">{{element.date | date}}</mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="name">
+  <ng-container matColumnDef="exerciseName">
     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.exerciseName}}</mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="calories">
+  <ng-container matColumnDef="caloriesBurned">
     <mat-header-cell *matHeaderCellDef mat-sort-header>Calories</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.calories | number}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.caloriesBurned | number}}</mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="duration">
+  <ng-container matColumnDef="timeSpent">
     <mat-header-cell mat-sort-header *matHeaderCellDef>Duration</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.duration | number}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.timeSpent | number}}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="state">

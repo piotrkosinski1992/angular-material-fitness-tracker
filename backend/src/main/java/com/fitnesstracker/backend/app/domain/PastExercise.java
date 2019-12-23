@@ -2,12 +2,10 @@ package com.fitnesstracker.backend.app.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 
 @Entity
 public class PastExercise {
@@ -15,12 +13,12 @@ public class PastExercise {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
-  @Transient
-  private UUID exerciseId;
+  private String exerciseName;
   private int caloriesBurned;
   private int timeSpent;
   private State state;
   private LocalDateTime date;
+  private String username;
 
   private PastExercise() {
   }
@@ -45,12 +43,20 @@ public class PastExercise {
     return date;
   }
 
-  public UUID getExerciseId() {
-    return exerciseId;
+  public String getUsername() {
+    return username;
   }
 
-  void setExerciseId(UUID exerciseId) {
-    this.exerciseId = exerciseId;
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getExerciseName() {
+    return exerciseName;
+  }
+
+  void setExerciseName(String exerciseName) {
+    this.exerciseName = exerciseName;
   }
 
   void setId(Integer id) {

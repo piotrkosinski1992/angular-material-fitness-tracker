@@ -4,5 +4,5 @@ import com.fitnesstracker.backend.app.domain.PastExercise;
 
 public interface SavePastExercises {
 
-  void save(PastExercise exercise);
+  void save(PastExercise exercise, String username);
 }

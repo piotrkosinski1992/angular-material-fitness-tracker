@@ -1,13 +1,9 @@
 package com.fitnesstracker.backend.app.domain;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Exercise {
@@ -17,10 +13,6 @@ public class Exercise {
   private String name;
   private int duration;
   private int calories;
-
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "EXERCISE_ID")
-  private List<PastExercise> pastExercises;
 
   private Exercise() {
     id = UUID.randomUUID();

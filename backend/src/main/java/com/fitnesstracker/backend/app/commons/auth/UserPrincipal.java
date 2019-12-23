@@ -19,18 +19,18 @@ public class UserPrincipal implements UserDetails {
   @Override
   public Collection<GrantedAuthority> getAuthorities() {
     List<GrantedAuthority> authorities = new ArrayList<>();
-    authorities.add(new SimpleGrantedAuthority("ROLE_" + this.baseEntity.getRole().toString()));
+    authorities.add(new SimpleGrantedAuthority("ROLE_" + this.baseEntity.role().toString()));
     return authorities;
   }
 
   @Override
   public String getPassword() {
-    return this.baseEntity.getPassword();
+    return this.baseEntity.password();
   }
 
   @Override
   public String getUsername() {
-    return this.baseEntity.getPassword();
+    return this.baseEntity.password();
   }
 
   @Override
